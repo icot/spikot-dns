@@ -1,0 +1,101 @@
+* Spikot-Dns 
+
+** Info
+
+*** DNS Message Format. TCP Illustrated v1 p520
+
+ - 12 byte header
+   - 0-1: Transaction ID: Set by client, returned by server
+   - 2-3: Flags
+     - QR: Query(0)/Response(1)
+     - OpCode (4bits)
+       - Query (0)
+       - Notify (4) DNS NOTIFY (RFC1996)
+       - Update (5) DNS Update (RFC2136)
+     - AA: Authoritative Answer
+     - TC: Truncated Answer (UDP: Total size of the reply > 512 bytes, only 1st part returned)
+     - RD: Recursion Desired
+     - RA: REcursion Available
+     - Z: Zero
+     - AD: Authentic Data (RFC4035)
+     - CD: Checking Disabled (RFC4035)
+     - RCODE (4bits) (RFC 1035 (0-5), RFC 2136 (6-10))
+       - 0 NoError
+       - 1 FormErr - Format Error
+       - 2 ServFail - Server Failure
+       - 3 NXDomain - Non-existent Domain
+       - 4 NotImp - Not Implemented
+       - 5 Refused - Query Refused
+       - 6 YXDomain - Name exists but should not (updates)
+       - 7 YXRRSet - RRSet exists but should not (updates)
+       - 8 NXRRSet - RRSet does not exist but should (updates)
+       - 9 NotAuth - Server not authorized for zone (updates)
+       - 10 NotZone - Name not contained in zone (updates)
+   - 4-5: QDCOUNT/ZOCOUNT (Query Count/ Zone Count)
+   - 6-7: ANCOUNT/PRCOUNT (Answer Count/ Prerequisite Count)
+   - 8-9: NSCOUNT/UPCOUNT (Authority Record Count/ Update Count)
+   - 10-11: ARCOUNT/ADCOUNT (Additional information Count)
+ - Four variable lenght sections:
+   - questions/queries
+   - answers (resource records - RR)
+   - authority records (RR)
+   - additional information (RR)
+ + Sections used with DNS Update
+   - Zone
+   - Prerequisite
+   - Update
+   - Additional Information
+
+*** Questions/RRs
+  - name (sequence of labels)
+    - labels
+      - Data [1-byte length, b1, b2, b3, 1-byte length, b4, ..., 0]
+        - length <= 63
+        - RFC1035: labels “start with a letter, end with a letter or digit, and have as interior characters only letters, digits and hyphen.”
+        - Could contain unicode, although not recommended (RFC5890, RFC5891)
+      - Compression labels
+        - If the length byte for a label has a value over 192, the 6 less significant bits are joined
+        with the 8 bits of the next byte to write a 14-bit offset pointer from the begging of the DNS message towards
+        a data label which whill be used in place
+
+*** DNS Extension format (EDNS0 RFC2671), required for DNSSEC
+
+  Specifies an additional type of RR: OPT pseudo-RR or meta-RR, added to the additional data section.
+  If this is included in UDP messages, it's permitted to exceed 512 bytes and might add additional error codes
+
+  Defines extended labels, which have the first two bits of the label Type/Length set to 01, so use values
+  between 64 and 127.
+
+*** UDP vs TCP
+
+ [ 20 bytes IPv4 Header | UDP Header 8 bytes | DNS Fixed Header 12 bytes | Sections: Variable size ]
+                                             <--------------     512 bytes       ------------------>
+
+ TCP DNS request (RFC5966) issued after UDP fails with TC set to 1 (truncated)
+
+*** Query/Zone Section Format
+
+  [ Query Name (variable), data labels | Query type (16 bits) | Query class (16 bits) ]
+
+  Class: 1 (Internet class), 254 (no class), 255 (all classes) (RFC 6195)
+  Type: A, ANY
+
+*** Resource Record format
+
+  [ Name (varible) | Type (16 bits) | Class (16 bits) | TTL (32 bits) | RDLENGTH (16 bits | RDATA (variable) ]
+
+** Usage
+
+** Installation
+
+** Author
+
++ icot
+
+** Copyright
+
+Copyright (c) 2021 icot
+
+** License
+
+Licensed under the GPLv3 License.

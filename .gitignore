@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 *.FASL
 *.fasl
 *.lisp-temp
@@ -15,3 +16,14 @@
 *.sx32fsl
 *.wx64fsl
 *.wx32fsl
+=======
+*.abcl
+*.fasl
+*.dx32fsl
+*.dx64fsl
+*.lx32fsl
+*.lx64fsl
+*.x86f
+*~
+.#*
+>>>>>>> 24c45f4 (skeleton)
