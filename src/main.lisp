@@ -21,7 +21,9 @@
 ;; TODO
 (defun parse-buffer (buffer)
   (if (> (length buffer) 11)
-    (parse-header (subseq buffer 0 11))
+    (progn
+      (parse-header (subseq buffer 0 11))
+      (parse-request (subseq buffer 11)))
     buffer))
 
 (defmacro get-bit (position value)
@@ -57,6 +59,9 @@
       (terpri (format t "nscount: ~a" nscount))
       (terpri (format t "arcount: ~a" arcount))
       nil)))
+
+;; TODO
+(defun parse-request (data) nil)
 
 (defun my-udp-handler (buffer)
   (declare (type (simple-array (unsigned-byte 8) *) buffer))
