@@ -2,8 +2,10 @@
   :version "0.1.0"
   :author "icot"
   :license "GPLv3"
-  :depends-on ()
-  :components ((:module "src"
+  :depends-on ("usocket"
+               "usocket-server")
+  :components ((:file "package")
+               (:module "src"
                 :components
                 ((:file "main"))))
   :description ""
