@@ -13,11 +13,13 @@
 
 ; https://raw.githubusercontent.com/usocket/usocket/master/server.lisp
 
-;; TODO Hex formatting doesn't apply to INT array
 (defun my-udp-handler (buffer)
   (declare (type (simple-array (unsigned-byte 8) *) buffer))
   (progn
-    (terpri (format t "[~a:~a] ~2,'0X" usocket:*remote-host* usocket:*remote-port* buffer))
+    (terpri (format t "[~{~a~^.~}:~a] ~{~a~^ ~}"
+                    (loop for byte :across usocket:*remote-host* :collecting byte)
+                    usocket:*remote-port*
+                    (loop :for byte :across buffer :collecting (format nil "~2,'0X" byte))))
     buffer))
 
 (defun echo-tcp-handler (stream)
@@ -29,7 +31,7 @@
 
 ;; TCP
 ;(usocket:socket-server host port #'my-tcp-handler)
-;
+
 ;; UDP
 (defun server ()
   (usocket:socket-server host port #'my-udp-handler nil :protocol :datagram))
