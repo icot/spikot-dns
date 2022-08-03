@@ -86,6 +86,38 @@
 
 ** Usage
 
+- Open terminal
+
+#+begin_src
+ cd roswell
+ ./spikot-dns.ros
+#+end_src
+
+- Second terminal session
+
+#+begin_src
+λ nslookup -port=1053 www.google.com 127.0.0.1
+;; Warning: query response not set
+Server:		127.0.0.1
+Address:	127.0.0.1#1053
+
+Non-authoritative answer:
+;; Warning: query response not set
+ Can't find www.google.com: No answer
+ #+end_src
+
+- Display via stdout in first terminal
+#+begin_src
+
+[127.0.0.1:56869] 08 5B 01 00 00 01 00 00 00 00 00 00 03 77 77 77 06 67 6F 6F 67 6C 65 03 63 6F 6D 00 00 01 00 01
+ID: 2139
+flags: (QR 0 OPCODE 0 AA 0 TC 0 RD 1 RA 0 Z 0 AD 0 CD 0 RCODE 0)
+qdcount: 1
+ancount: 0
+nscount: 0
+arcount: 0
+#+end_src
+
 ** Installation
 
 ** Author
